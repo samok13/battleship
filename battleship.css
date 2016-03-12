@@ -7,11 +7,14 @@
 }
 
 .square{
-  width: 10%;
+  width: 32px;
   height:32px;
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  display: inline-block;
 }
 
 #board{
-  width:640px;
-  height:640px;
+
 }

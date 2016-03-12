@@ -1,3 +1,8 @@
+var DIRECTION = {
+  VERTICAL: 'VERTICAL',
+  HORIZONTAL: 'HORIZONTAL'
+}
+
 var model = {
 
   init: function(){
@@ -12,10 +17,10 @@ var model = {
   }, 
 
   shipDirection: function(){
-    return [_.sample([1,0], [0,1])];
+    return _.sample(DIRECTION.VERTICAL, 
+                    DIRECTION.HORIZONTAL);
   }
 }
-
 
 var shipModel = {
 
@@ -46,7 +51,7 @@ var shipModel = {
   
     for(var i = 0; i < ship.length; i++){
       var position;
-      if (_.isEqual(this.direction, [1,0])){
+      if (this.direction === DIRECTION.HORIZONTAL){
         position = [ship.x + i, ship.y, 0];
       }
       else{
@@ -56,7 +61,7 @@ var shipModel = {
     }
     shipModel.shipsArray.push(ship);
     
-    view.shipToBoard(ship);
+    //view.shipToBoard(ship);
   },
 
   shipOnPoint: function(hitLocationID, hitPositionIndex) {
