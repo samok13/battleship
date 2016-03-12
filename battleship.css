@@ -1,0 +1,17 @@
+.ship {
+  visibility: hidden;
+}
+
+.div{
+
+}
+
+.square{
+  width: 10%;
+  height:32px;
+}
+
+#board{
+  width:640px;
+  height:640px;
+}
