@@ -7,8 +7,8 @@
 }
 
 .square{
-  width: 32px;
-  height:32px;
+  width: 16px;
+  height:16px;
   border-color: black;
   border-width: 1px;
   border-style: solid;
@@ -17,4 +17,20 @@
 
 #board{
 
+}
+
+.OPEN{
+  background-color: white;
+}
+
+.HIT{
+  background-color: red;
+}
+
+.SHIP{
+  background-color: gray;
+}
+
+.MISS{
+  background-color: blue;
 }

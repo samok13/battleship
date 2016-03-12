@@ -3,10 +3,29 @@ var DIRECTION = {
   HORIZONTAL: 'HORIZONTAL'
 }
 
+var STATE_OPTIONS ={
+  OPEN: 'OPEN',
+  HIT: 'HIT',
+  SHIP: 'SHIP',
+  MISS: 'MISS'
+}
+
 var model = {
 
   init: function(){
     this.board_size = 10;
+    this.squares = [];
+
+
+    for (var y = 0; y < model.board_size; y++){
+      this.squares.push([]);
+      for (var x = 0; x < model.board_size; x++){
+        var square = {};
+        square.state = STATE_OPTIONS.OPEN;
+        this.squares[y].push(square);
+      }
+    }
+
   },
 
   randomLocation: function(){
@@ -28,6 +47,12 @@ var shipModel = {
     this.shipLengthArray = [1,1,1,2,2,3];
     this.shipsArray = [];
 
+    function add(sum,element){
+      return sum + element;
+    }
+
+    this.totalHits = this.shipLengthArray.reduce(add, 0);
+
     for (var i = 0; i < this.shipLengthArray.length; i++){
       this.createShip(this.shipLengthArray[i], i);
     }
@@ -38,7 +63,10 @@ var shipModel = {
     ship.direction = model.shipDirection();
     ship.length = length;
     ship.id = idx;
+    ship.hits = 0;
     this.placeShip(ship);
+
+    this.shipsArray.push(ship);
   },
 
   //this doesn't have validations on placement yet
@@ -46,48 +74,51 @@ var shipModel = {
     ship.headLocation = model.randomLocation();
     ship.x = ship.headLocation[0];
     ship.y = ship.headLocation[1];
-    ship.node = new Array(ship.length);
-    ship.positions = [];
+
   
     for(var i = 0; i < ship.length; i++){
-      var position;
+      var y;
+      var x;
       if (this.direction === DIRECTION.HORIZONTAL){
-        position = [ship.x + i, ship.y, 0];
+        y = ship.y;
+        x = ship.x + i;
       }
       else{
-        position = [ship.x, ship.y + i, 0];
+         y = ship.y + i;
+         x = ship.x;
       } 
-      ship.positions.push(position);
-    }
-    shipModel.shipsArray.push(ship);
-    
-    //view.shipToBoard(ship);
-  },
+      if (y >= model.board_size || x >= model.board_size || model.squares[y][x].state === STATE_OPTIONS.SHIP){
+        location.reload();
+      }
+      else{
+        var newSquare = {
+          state: STATE_OPTIONS.SHIP,
+          ship: ship
+        };
 
-  shipOnPoint: function(hitLocationID, hitPositionIndex) {
-    var return_value = false;
-
-    for (var i = 0; i < this.shipsArray.length; i++){
-      this.currentShip = this.shipsArray[i];
-      if(_.isEqual((hitLocationID), currentShip.id)){
-        currentShip[hitPositionIndex][2] = [1];
-        return_value = true;
+        model.squares[y][x] = newSquare;
       }
     }
-    return return_value;
+    view.render();
+  },
+
+  checkPoint: function(posX, posY) {
+    var square = model.squares[posY][posX];
+
+    if(square.state === STATE_OPTIONS.SHIP){
+      square.state = STATE_OPTIONS.HIT;
+      square.ship.hits++;
+      this.shipSunk(square.ship)
+    }
+    else{
+      square.state = STATE_OPTIONS.MISS;
+    }
   },
 
   shipSunk: function(ship) {
-    var sunkSpots = 0;
-    var totalShipsSunk = 0;
-
-    for (var i = 0; i < ship.positions.length; i++){
-      if(_.isEqual((ship.positions[i][2]), 1)){
-        this.sunkSpots++;
-      }
-    } 
-    if(sunkSpots === ship.positions.length) {
-      this.totalShipsSunk++;
+    if(ship.hits >= ship.length){
+      alert("Ship down!");
+      this.allShipSunk();
       return true;
     }
     else{
@@ -96,9 +127,10 @@ var shipModel = {
   },
 
   allShipSunk: function() {
-    if(this.totalShipsSunk === shipModel.shipLengthArray.length){
-      return true;
+    var currentHits = shipModel.shipsArray.reduce(function(sum, ship){ return sum + ship.hits}, 0);
+    if(currentHits >= this.totalHits){
+      alert("You win!");
+      location.reload();
     }
   }
-
 }

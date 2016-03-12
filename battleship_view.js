@@ -10,9 +10,10 @@ var view = {
   addClickHandler: function(){
     $(".square").on("click", function(event){
       console.log(event.target);
-      // this.hitLocationID = $(event.target).attr('data-id');
-      // this.hitPositionIndex = $(event.target).attr('position-id');
-      // controller.gameLoop(event.target);
+      var posX = parseInt($(event.target).attr('data-x'));
+      var posY = parseInt($(event.target).attr('data-y'));
+      shipModel.checkPoint(posX, posY);
+      view.render()
     })
 
   },
@@ -22,19 +23,10 @@ var view = {
 
     for (var y = 0; y < model.board_size; y++){
       for (var x = 0; x < model.board_size; x++){
-        $("#board").append('<div class="square" data-x="'+ x +'" data-y="'+ y +'" ></div>');
-      //   if(this.hitLocationID){
-      //     if(shipModel.shipOnPoint(this.hitLocationID, this.hitPositionIndex)){
-      //      $("#board").append("<div class='square'>S</div>");
-      //     }
-      //     else{
-      //      $("#board").append("<div class='square'>M</div>");
-      //     }   
-      //   }
-      //   else{
-      //     $("#board").append("<div class='square'>o</div>");
-      //   }                                  
-      // }
+        var state = model.squares[y][x].state;
+
+        $("#board").append('<div class="square ' + state +'"data-x="'+ x +'" data-y="'+ y +'" ></div>');
+   
       }
     $("#board").append('<br>');
     } 
